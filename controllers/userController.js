@@ -15,12 +15,12 @@ export const signup = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: 'All fields are required' });
+      return res.json({ success: false, message: 'All fields are required' });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: 'User already exists' });
+      return res.json({ success: false, message: 'User already exists' });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -46,16 +46,16 @@ export const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
 
     if (!email || !otp) {
-      return res.status(400).json({ success: false, message: 'All fields are required' });
+      return res.json({ success: false, message: 'All fields are required' });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return res.json({ success: false, message: 'User not found' });
     }
 
     if (user.otp !== otp || user.otpExpires < Date.now()) {
-      return res.status(401).json({ success: false, message: 'Invalid or expired OTP' });
+      return res.json({ success: false, message: 'Invalid or expired OTP' });
     }
 
     user.otp = null;
@@ -75,12 +75,12 @@ export const login = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ success: false, message: 'Email is required' });
+      return res.json({ success: false, message: 'Email is required' });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return res.json({ success: false, message: 'User not found' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -101,7 +101,7 @@ export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password -otp -otpExpires');
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return res.json({ success: false, message: 'User not found' });
     }
     res.json({ success: true, message: 'Profile fetched successfully', user });
   } catch (err) {
@@ -147,7 +147,7 @@ export const updateProfile = async (req, res) => {
     if (req.file) {
       
       if (req.file.mimetype !== 'application/pdf') {
-        return res.status(400).json({
+        return res.json({
           success: false,
           message: 'Only PDF files are allowed for resume uploads.',
         });

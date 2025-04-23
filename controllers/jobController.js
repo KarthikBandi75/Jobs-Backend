@@ -30,11 +30,11 @@ export const addJob = async (req, res) => {
       !perks ||
       !noOfOpenings
     ) {
-      return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+      return res.json({ success: false, message: 'All required fields must be provided' });
     }
 
     if (moment(lastDateToApply).isBefore(moment())) {
-      return res.status(400).json({ success: false, message: 'Last date to apply must be in the future' });
+      return res.json({ success: false, message: 'Last date to apply must be in the future' });
     }
 
     const job = new Job({
@@ -54,7 +54,7 @@ export const addJob = async (req, res) => {
     });
 
     await job.save();
-    res.status(201).json({ success: true, message: 'Job added successfully', job });
+    res.json({ success: true, message: 'Job added successfully', job });
   } catch (err) {
     console.error('Error adding job:', err.message);
     res.status(500).json({ success: false, message: 'Server error' });
@@ -65,12 +65,12 @@ export const updateJob = async (req, res) => {
   try {
     const job = await Job.findOne({ _id: req.params.id, company: req.user.companyId });
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found or unauthorized' });
+      return res.json({ success: false, message: 'Job not found or unauthorized' });
     }
 
     const updates = req.body;
     if (updates.lastDateToApply && moment(updates.lastDateToApply).isBefore(moment())) {
-      return res.status(400).json({ success: false, message: 'Last date to apply must be in the future' });
+      return res.json({ success: false, message: 'Last date to apply must be in the future' });
     }
 
     Object.assign(job, updates);
@@ -86,7 +86,7 @@ export const deleteJob = async (req, res) => {
   try {
     const job = await Job.findOneAndDelete({ _id: req.params.id, company: req.user.companyId });
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found or unauthorized' });
+      return res.json({ success: false, message: 'Job not found or unauthorized' });
     }
     res.json({ success: true, message: 'Job deleted' });
   } catch (err) {
@@ -99,7 +99,7 @@ export const getJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id).populate('company', 'companyName email'); 
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.json({ success: false, message: 'Job not found' });
     }
     res.json({ success: true, job });
   } catch (err) {

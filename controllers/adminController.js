@@ -63,7 +63,7 @@ export const deleteJobSeeker = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Job seeker not found' });
+      return res.json({ success: false, message: 'Job seeker not found' });
     }
     res.json({ success: true, message: 'Job seeker deleted' });
   } catch (err) {
@@ -76,7 +76,7 @@ export const manageJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.json({ success: false, message: 'Job not found' });
     }
     if (req.method === 'PUT') {
       const updates = req.body;
@@ -97,7 +97,7 @@ export const flagJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.json({ success: false, message: 'Job not found' });
     }
     job.isFlagged = true;
     await job.save();

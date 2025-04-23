@@ -7,7 +7,7 @@ export const applyJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
     if (!job || !job.isActive) {
-      return res.status(404).json({ success: false, message: 'Job not found or inactive' });
+      return res.json({ success: false, message: 'Job not found or inactive' });
     }
 
     const existingApplication = await Application.findOne({
@@ -15,7 +15,7 @@ export const applyJob = async (req, res) => {
       user: req.user.userId,
     });
     if (existingApplication) {
-      return res.status(400).json({ success: false, message: 'Already applied to this job' });
+      return res.json({ success: false, message: 'Already applied to this job' });
     }
 
     const application = new Application({
@@ -39,7 +39,7 @@ export const withdrawApplication = async (req, res) => {
       user: req.user.userId,
     });
     if (!application) {
-      return res.status(404).json({ success: false, message: 'Application not found' });
+      return res.json({ success: false, message: 'Application not found' });
     }
     res.json({ success: true, message: 'Application withdrawn' });
   } catch (err) {
@@ -73,7 +73,7 @@ export const getJobApplications = async (req, res) => {
   try {
     const job = await Job.findOne({ _id: req.params.id, company: req.user.companyId });
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found or unauthorized' });
+      return res.json({ success: false, message: 'Job not found or unauthorized' });
     }
 
     const applications = await Application.find({ job: req.params.id }).populate('user', 'name email resumeUrl');
@@ -88,7 +88,7 @@ export const updateApplicationStatus = async (req, res) => {
   try {
     const { status } = req.body;
     if (!['pending', 'accepted', 'rejected'].includes(status)) {
-      return res.status(400).json({ success: false, message: 'Invalid status' });
+      return res.json({ success: false, message: 'Invalid status' });
     }
 
     const application = await Application.findOne({
@@ -98,7 +98,7 @@ export const updateApplicationStatus = async (req, res) => {
       .populate('user', 'email');
 
     if (!application) {
-      return res.status(404).json({ success: false, message: 'Application not found or unauthorized' });
+      return res.json({ success: false, message: 'Application not found or unauthorized' });
     }
 
     application.status = status;
