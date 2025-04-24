@@ -64,8 +64,6 @@ export const deleteEmployer = async (req, res) => {
   }
 };
 
-};
-
 export const deleteJobSeeker = async (req, res) => {
   try {
     const userId = req.params.id;
