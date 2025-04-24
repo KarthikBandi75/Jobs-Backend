@@ -94,6 +94,7 @@ export const manageJob = async (req, res) => {
       res.json({ success: true, message: 'Job updated', job });
     } else if (req.method === 'DELETE') {
       await job.deleteOne();
+      await Application.deleteMany({ job: req.params.id });
       res.json({ success: true, message: 'Job deleted' });
     }
   } catch (err) {
