@@ -68,10 +68,12 @@ export const deleteEmployer = async (req, res) => {
 
 export const deleteJobSeeker = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const userId = req.params.id;
+    const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.json({ success: false, message: 'Job seeker not found' });
     }
+    await Application.deleteMany({ user: userId });
     res.json({ success: true, message: 'Job seeker deleted' });
   } catch (err) {
     console.error('Error deleting job seeker:', err.message);
