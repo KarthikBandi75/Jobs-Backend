@@ -4,7 +4,7 @@ import EmployAuth from '../models/employAuth.js';
 import User from '../models/user.js';
 import Job from '../models/job.js';
 import CompanyProfile from '../models/companyProfile.js';
-import Application from '../models/Application.js';
+import Application from '../models/application.js';
 
 dotenv.config();
 
