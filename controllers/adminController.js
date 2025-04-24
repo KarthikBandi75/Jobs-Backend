@@ -4,6 +4,7 @@ import EmployAuth from '../models/employAuth.js';
 import User from '../models/user.js';
 import Job from '../models/job.js';
 import CompanyProfile from '../models/companyProfile.js';
+import Application from '../models/Application.js';
 
 dotenv.config();
 
@@ -46,17 +47,23 @@ export const getAllUsers = async (req, res) => {
 
 export const deleteEmployer = async (req, res) => {
   try {
-    const employer = await EmployAuth.findByIdAndDelete(req.params.id);
+    const employerId = req.params.id;
+    const employer = await EmployAuth.findByIdAndDelete(employerId);
     if (!employer) {
       return res.json({ success: false, message: 'Employer not found' });
     }
-    await CompanyProfile.deleteOne({ employer: req.params.id });
-    await Job.deleteMany({ company: req.params.id });
-    res.json({ success: true, message: 'Employer and associated data deleted' });
+    await CompanyProfile.deleteOne({ employer: employerId });
+    const jobs = await Job.find({ company: employerId });
+    const jobIds = jobs.map(job => job._id);
+    await Application.deleteMany({ job: { $in: jobIds } });
+    await Job.deleteMany({ company: employerId });
+    res.json({ success: true, message: 'Employer, related jobs, company profile, and applications deleted' });
   } catch (err) {
     console.error('Error deleting employer:', err.message);
     res.status(500).json({ success: false, message: 'Server error' });
   }
+};
+
 };
 
 export const deleteJobSeeker = async (req, res) => {
