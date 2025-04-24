@@ -1,6 +1,6 @@
-import Application from '../models/application.js';
 import Job from '../models/job.js';
 import User from '../models/user.js';
+import Application from '../models/application.js';
 import { sendEmail } from '../config/nodemailer.js';
 
 export const applyJob = async (req, res) => {
